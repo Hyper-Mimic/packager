@@ -213,6 +213,7 @@
     display: flex;
     align-items: center;
     flex-wrap: wrap;
+    gap: 8px;
   }
   input[type="text"], input[type="file"] {
     margin-left: 4px;

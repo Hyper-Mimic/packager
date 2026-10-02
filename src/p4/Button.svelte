@@ -20,11 +20,14 @@
     border: none;
     padding: 0.5rem 1rem;
     margin: 0;
-    border-radius: 4px;
+    border-radius: var(--radius-sm, 6px);
     overflow: hidden;
     cursor: pointer;
-    font-family: inherit;
     font-weight: bold;
+    transition: filter 0.15s;
+  }
+  button:hover {
+    filter: brightness(0.94);
   }
   .text {
     display: flex;

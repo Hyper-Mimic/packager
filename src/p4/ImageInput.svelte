@@ -62,12 +62,12 @@
 <style>
   .container {
     background: transparent;
-    color: #555;
+    color: var(--text-muted, #6b7075);
     width: 100%;
     box-sizing: border-box;
-    border: 3px dashed currentColor;
-    transition: .2s border-color, .2s color;
-    border-radius: 20px;
+    border: 2px dashed var(--border-strong, #cfd1d4);
+    border-radius: var(--radius-lg, 16px);
+    transition: border-color 0.15s, color 0.15s, background-color 0.15s;
     min-height: 90px;
     font: inherit;
     display: flex;
@@ -79,18 +79,19 @@
     cursor: pointer;
     padding: 4px;
   }
-  :global([theme="dark"]) .container {
-    color: #aaa;
+  .container:hover {
+    border-color: var(--text-muted, #6b7075);
+    color: var(--text, inherit);
   }
+  /* Dropping and focus both read as "this will accept your file", so they share one look:
+     accent outline, tinted fill. The two hardcoded blues this replaced did not follow the
+     accent colour or the theme. */
   .dropping,
   .container:focus-visible,
   .container:active {
-    color: rgb(79, 123, 211);
-  }
-  :global([theme="dark"]) .dropping,
-  :global([theme="dark"]) .container:focus-visible,
-  :global([theme="dark"]) .container:active {
-    color: rgb(178, 195, 228);
+    border-color: var(--accent, #ff4c4c);
+    color: var(--text, inherit);
+    background-color: var(--surface-2, #f5f6f7);
   }
   .placeholder {
     font-size: 1.5em;
@@ -103,6 +104,22 @@
   }
   .selected > *:not(:last-child) {
     margin-right: 12px;
+  }
+  /* The clear button is a plain <button> inside the drop area, so it matches the page's
+     secondary buttons by hand. */
+  .selected button {
+    font: inherit;
+    padding: 5px 12px;
+    color: var(--text, inherit);
+    background-color: var(--surface-2, #f5f6f7);
+    border: 1px solid var(--border-strong, #cfd1d4);
+    border-radius: var(--radius-md, 10px);
+    cursor: pointer;
+    transition: background-color 0.15s, border-color 0.15s;
+  }
+  .selected button:hover {
+    background-color: var(--surface-3, #ececee);
+    border-color: var(--text-muted, #6b7075);
   }
 </style>
 
