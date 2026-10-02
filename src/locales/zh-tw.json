@@ -8,6 +8,9 @@
         "cancel": "取消"
     },
     "options": {
+        "actionBar": "封裝操作",
+        "nav": "設定分區",
+        "home": "首頁",
         "accentColor": "主題色（按鈕背景、詢問框、右鍵選單等）",
         "advancedOptions": "進階選項",
         "advancedSummary": "正常來說，你不會想要、也不需更改這些（點擊以展開）。",
@@ -57,6 +60,32 @@
         "normalCursor": "顯示指標",
         "otherEnvironments": "其他方式（點擊以展開）",
         "otherEnvironmentsHelp": "大多數的新專案應使用上面的方式。",
+        "nativeWarning": "不建議為特定平台打包原生程式。大多數情況下，「HTML」或 Zip 壓縮檔有許多優勢：",
+        "nativeAdvantageWeb": "可以直接在網站上執行，支援任何平台，甚至手機",
+        "nativeAdvantageVirus": "使用者比較不會懷疑程式帶有病毒",
+        "nativeAdvantageSize": "檔案大小小得多",
+        "nativeAdvantageOffline": "仍然可以下載到本機離線執行",
+        "nativeWarningFooter": "如果你並非真的需要為每個平台製作獨立程式（我們理解某些情況下確實有此必要），建議你不要這麼做。",
+        "windowsUnsigned": "本站產生的所有 Windows 程式都沒有簽章，因此使用者第一次執行時會看到 SmartScreen 警告。使用者可以依序點選「更多資訊」和「仍要執行」來略過這些警告。",
+        "windowsExtras": "要更換執行檔的圖示或製作安裝程式，請下載並執行 {extras}，然後選擇本站產生的輸出。",
+        "macosPolicy": "由於 Apple 的政策，為其平台打包相當麻煩。你只能二選一：",
+        "macosGatekeeper": "請使用者忽略嚇人的 Gatekeeper 警告：開啟 Finder > 前往應用程式 > 按右鍵 > 打開 > 打開。本站產生的程式都需要這個步驟。",
+        "macosNotarize": "或者每年付給 Apple 100 美元購買開發者帳號來簽署與公證程式（流程非常繁瑣；如需更多資訊，請透過意見回饋與我們聯絡）",
+        "linuxExperimental": "Linux 支援仍處於實驗階段。",
+        "electronIntro": "Electron 環境會把一份 Chromium（Google Chrome 的開源部分）和你的作品一起打包進去，所以程式會非常大。",
+        "electron32bit": "注意：你選擇的是 32 位元或 64 位元模式。這能最大化裝置相容性，但會限制程式可用的記憶體。如果遇到當機，請嘗試在「其他方式」中改用僅 64 位元模式。",
+        "electronMac": "在 macOS 上，程式會在 Intel 和 Apple 晶片的 Mac 上原生執行。",
+        "electronLinux": "在 Linux 上，可以透過執行 {cmd} 來啟動程式。",
+        "nwjsIntro": "NW.js 環境會把一份 Chromium（Google Chrome 的開源部分）和你的作品一起打包進去，所以程式會非常大。",
+        "nwjsDocs": "更多幫助與操作步驟請參閱 {docs}。",
+        "nwjsMacRosetta": "在 macOS 上，程式會在 Apple 晶片的 Mac 上透過 Rosetta 執行。",
+        "wkwebviewIntro": "WKWebView 是為 macOS 打包的首選方式。它會比其它 macOS 專用環境小幾百 MB，而且通常執行最快。",
+        "wkwebviewNative": "程式會在執行 macOS 10.13 或更新版本的 Intel 和 Apple 晶片 Mac 上原生執行。",
+        "wkwebviewNote": "請注意：",
+        "wkwebviewVideoSensing": "視訊偵測和音量積木只能在 macOS 12 或更新版本上運作。",
+        "wkwebviewPointerLock": "滑鼠指標鎖定將無法運作。",
+        "wkwebviewLargeProjects": "非常大型的作品可能無法正常運作。",
+        "wkwebviewFallback": "如果遇到這些問題，請改用「Electron macOS 程式」（在「其他方式」內）或「HTML」環境。",
         "package": "封裝",
         "packageName": "應用程式名稱",
         "packageNameHelp": "應用程式名稱必須是唯一的，相同的專案應使用同樣的應用程式名稱。",
@@ -83,7 +112,8 @@
         "username": "用戶名稱（以「#」代表一個隨機數）",
         "warpTimer": "防卡死",
         "zip": "Zip（用於網站的最佳選擇）",
-        "zip-one-asset": "Zip，封裝所有素材（不推薦）"
+        "zip-one-asset": "Zip，封裝所有素材（不推薦）",
+        "zipWarning": "Zip 環境是用來把作品發佈到網站上的。其他用途，例如透過通訊軟體或電子郵件把作品傳給朋友，請改用「HTML」，因為 Zip 在這些情況下無法正常運作。"
     },
     "p4": {
         "close": "關閉",
@@ -97,6 +127,10 @@
         "refresh": "重新整理",
         "reportBug": "回報錯誤",
         "sourceCode": "原始碼"
+    },
+    "news": {
+        "backgroundThrottling": "預設情況下，Electron 應用程式在最小化或隱藏時將不再受到限流。有一個選項可以恢復舊有行為。",
+        "new": "新功能！"
     },
     "preview": {
         "loading": "預覽加載中"

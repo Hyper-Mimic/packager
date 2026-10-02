@@ -19,12 +19,15 @@
       } else {
         const value = values && values[part];
         if (value) {
-          const node = document.createElement('a');
-          node.href = value.href;
+          // `code: true` renders a literal to be read rather than a link to be followed.
+          const node = document.createElement(value.code ? 'code' : 'a');
           node.textContent = value.text;
-          if (value.newTab) {
-            node.target = '_blank';
-            node.rel = 'noopener noreferrer';
+          if (!value.code) {
+            node.href = value.href;
+            if (value.newTab) {
+              node.target = '_blank';
+              node.rel = 'noopener noreferrer';
+            }
           }
           el.appendChild(node);
         } else {

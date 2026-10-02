@@ -33,11 +33,59 @@ const allMessages = {
   /*===*/
 };
 
-const KNOWN_GOOD_LANGUAGES = ['en', 'es', 'ja', 'nl', 'it', 'sl'];
-const getInitialLocale = () => [
-  navigator.language.toLowerCase(),
-  navigator.language.toLowerCase().split('-')[0]
-].find(i => KNOWN_GOOD_LANGUAGES.includes(i) && allMessages[i]) || 'en';
+// Browser language tags that don't map 1:1 onto a catalogue we ship.
+const LANGUAGE_ALIASES = {
+  // Chinese browsers report a wide range of region/script tags; collapse them onto our two files.
+  zh: 'zh-cn',
+  'zh-hans': 'zh-cn',
+  'zh-sg': 'zh-cn',
+  'zh-my': 'zh-cn',
+  'zh-hant': 'zh-tw',
+  'zh-hk': 'zh-tw',
+  'zh-mo': 'zh-tw',
+  // The Bokmål catalogue also serves Nynorsk and the legacy "no" tag.
+  no: 'nb',
+  nn: 'nb'
+};
+
+// Map a single browser language tag onto a catalogue we ship, or null.
+const findSupportedLocale = (language) => {
+  const tag = language.toLowerCase();
+  if (allMessages[tag]) {
+    return tag;
+  }
+  if (LANGUAGE_ALIASES[tag]) {
+    return LANGUAGE_ALIASES[tag];
+  }
+  const base = tag.split('-')[0];
+  if (allMessages[base]) {
+    return base;
+  }
+  if (LANGUAGE_ALIASES[base]) {
+    return LANGUAGE_ALIASES[base];
+  }
+  // We may not ship a bare "xx" but we could ship a regional variant such as "pt-br".
+  return Object.keys(allMessages).find((locale) => locale.startsWith(base + "-")) || null;
+};
+
+// Walk the browser's language preference list and take the first one we can serve.
+const getInitialLocale = () => {
+  if (typeof navigator === 'undefined') {
+    return 'en';
+  }
+  const languages = navigator.languages && navigator.languages.length > 0
+    ? navigator.languages
+    : [navigator.language];
+  for (const language of languages) {
+    if (language) {
+      const supported = findSupportedLocale(language);
+      if (supported) {
+        return supported;
+      }
+    }
+  }
+  return 'en';
+};
 
 const locale = writablePersistentStore('P4.locale', getInitialLocale());
 locale.subscribe((lang) => {
