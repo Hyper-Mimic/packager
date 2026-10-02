@@ -400,7 +400,14 @@
      viewport instead of scrolling away with the page. */
   .settings-actions {
     position: sticky;
-    bottom: 0;
+    /* Stops one gutter short of the viewport edge instead of flush against it. Flush used
+       to look fine only while the page could still scroll: the bar also stops travelling
+       the moment its containing block ends, and there it rests exactly one gutter above the
+       document bottom (that gutter is <main>'s padding). The two positions disagreed by
+       that gutter, so the bar sat flush while scrolling and then visibly jumped up 16px as
+       soon as the page hit the end. Making the sticky offset the same gutter lines the two
+       up, and the bar keeps the same breathing room at every scroll position. */
+    bottom: var(--gutter, 16px);
     /* Flex item with auto inline margins: it needs an explicit width, and border-box so
        that width is the outer one (the bar has padding and a border). */
     box-sizing: border-box;

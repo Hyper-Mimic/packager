@@ -113,6 +113,10 @@
     --shadow: 0 1px 2px rgba(16, 24, 40, 0.04), 0 4px 12px -2px rgba(16, 24, 40, 0.06);
     --shadow-lg: 0 4px 12px -2px rgba(16, 24, 40, 0.1), 0 16px 40px -8px rgba(16, 24, 40, 0.18);
     --focus: #4c97ff;
+    /* Page gutter. It is <main>'s padding, which makes it both the margin around the cards
+       and - because the action bar sticks at that same distance - the gap it keeps from the
+       bottom edge of the viewport. One token so those two can never drift apart. */
+    --gutter: 16px;
     --content-w: 960px;
     --sidebar-w: 232px;
     font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
@@ -453,8 +457,9 @@
     flex-direction: column;
     min-width: 0;
     /* Cards are `max-width` + auto-centred, so without a gutter they go edge-to-edge and
-       stop reading as cards on anything narrower than the content width. */
-    padding: 16px;
+       stop reading as cards on anything narrower than the content width. The same value is
+       what the action bar leaves below itself while it is stuck, so it is a token now. */
+    padding: var(--gutter, 16px);
   }
   /* Footer chrome. Links inherit the muted colour instead of the raw `blue` from the bare
      `a` rule, and only pick up the brand accent on hover, so the stack stays quiet. */
