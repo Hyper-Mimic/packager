@@ -161,6 +161,16 @@
     padding: 4px 6px;
     transition: border-color 0.15s, box-shadow 0.15s;
   }
+  /* The taller fields need the same correction, and the same 2px does it: `middle` aligns the
+     box centre with baseline + half x-height, so the error is a property of that target line
+     rather than of the box height - measured against 26px number inputs and 38px selects the
+     residual is the same 0.3px as for the 15px checkboxes. */
+  :global(input[type="text"]),
+  :global(input[type="number"]) {
+    vertical-align: middle;
+    position: relative;
+    top: -2px;
+  }
   /* Selects are styled separately from the other fields because they need a drawn chevron:
      Safari keeps its native control (`.is-not-safari` is only added when not on Safari). */
   :global(.is-not-safari select) {
@@ -176,6 +186,10 @@
     padding: 6px 30px 6px 10px;
     max-width: 100%;
     cursor: pointer;
+    /* Same optical lift as the other fields, for the same reason. */
+    vertical-align: middle;
+    position: relative;
+    top: -2px;
     /* Reaches the popup list too: engines use it for the highlighted row. */
     accent-color: var(--accent);
     transition: border-color 0.15s, box-shadow 0.15s, background-color 0.15s;
@@ -303,7 +317,16 @@
     width: 15px;
     height: 15px;
     margin: 0;
+    /* `vertical-align: middle` aligns the box centre with the baseline plus half the x-height,
+       but a glyph's optical centre sits higher than that: capitals and Han characters both
+       reach well above the x-height, so a middle-aligned box reads as sitting low next to its
+       label. Lifting it by 2px matches the real ink centre - measured worst case across the
+       Chinese, English and wrapped option labels is 1.2px, versus 2.3px unadjusted. A
+       `position: relative` nudge is used rather than a negative margin because the margin
+       would also stretch the line box and change the row rhythm. */
     vertical-align: middle;
+    position: relative;
+    top: -2px;
     background-color: var(--surface-2);
     border: 1px solid var(--border-strong);
     border-radius: 4px;
@@ -342,6 +365,10 @@
     background: var(--surface-2);
     border: 1px solid var(--border-strong);
     border-radius: var(--radius-sm);
+    /* Same optical lift as the other inline fields. */
+    vertical-align: middle;
+    position: relative;
+    top: -2px;
   }
   /* A file input is one UA-drawn button plus a label; only the button part is reachable,
      through ::file-selector-button. The whole selector sits inside :global() so Svelte does
@@ -349,6 +376,9 @@
   :global(input[type="file"]) {
     max-width: 100%;
     color: var(--text-muted);
+    vertical-align: middle;
+    position: relative;
+    top: -2px;
   }
   :global(input[type="file"]::file-selector-button) {
     font: inherit;
