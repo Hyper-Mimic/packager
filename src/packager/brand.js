@@ -30,23 +30,24 @@ If this is set to an empty string, the link is removed.
 */
 
 module.exports = {
-  APP_NAME: 'TurboWarp Packager',
-  WEBSITE: 'https://packager.turbowarp.org/',
+  APP_NAME: 'HyperMimic Packager',
+  WEBSITE: 'https://hypermimic.netlify.app/',
   COPYRIGHT_NOTICE: `Copyright (C) 2021-2024 Thomas Weber
+  Copyright (C) 2026 Clyain
 
 The Source Code Form of this program is available under the terms of the
 Mozilla Public License, v. 2.0. You can obtain a copy of the license at
 https://www.mozilla.org/en-US/MPL/2.0/.`,
   ACCENT_COLOR: '#ff4c4c',
-  SOURCE_CODE: 'https://github.com/TurboWarp/packager',
-  FEEDBACK_PRIMARY: {
+  SOURCE_CODE: 'https://github.com/Hyper-Mimic/packager',
+  FEEDBACK_SECONDARY: {
     name: 'Scratch',
     link: 'https://scratch.mit.edu/users/GarboMuffin/#comments'
   },
-  FEEDBACK_SECONDARY: {
+  FEEDBACK_PRIMARY: {
     name: 'GitHub',
-    link: 'https://github.com/TurboWarp/packager/issues'
+    link: 'https://github.com/Hyper-Mimic/packager/issues'
   },
   DONATE: '',
-  PRIVACY_POLICY: 'https://turbowarp.org/privacy.html',
+  PRIVACY_POLICY: 'https://hypermimic.netlify.app/privacy.html',
 };

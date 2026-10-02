@@ -1,6 +1,8 @@
-# TurboWarp Packager
+# HyperMimic Packager
 
-https://packager.turbowarp.org/
+English | [简体中文](README_zh-cn.md)
+
+https://hypermimic.netlify.app/packager
 
 Converts Scratch projects into HTML files, zip archives, or executable programs for Windows, macOS, and Linux.
 
@@ -79,7 +81,7 @@ Set the environment variable `ENABLE_SERVICE_WORKER` to `1` to enable service wo
 
 ## Standalone builds
 
-The packager supports generating "standalone builds" that are single HTML files containing the entire packager. Large files such as Electron binaries will still be downloaded from a remote server as needed. You can download prebuilt standalone builds from [our GitHub releases](https://github.com/TurboWarp/packager/releases). These can be useful if our website is blocked or you don't have a reliable internet connection. Note that standalone builds do not contain an update checker, so do check on your own occasionally.
+The packager supports generating "standalone builds" that are single HTML files containing the entire packager. Large files such as Electron binaries will still be downloaded from a remote server as needed. You can download prebuilt standalone builds from [our GitHub releases](https://github.com/Hyper-Mimic/packager/releases). These can be useful if our website is blocked or you don't have a reliable internet connection. Note that standalone builds do not contain an update checker, so do check on your own occasionally.
 
 To make a production standalone build locally:
 
@@ -104,5 +106,6 @@ npm run build-node-prod
 <!-- Make sure to also update COPYRIGHT_NOTICE in src/packager/brand.js -->
 
 Copyright (C) 2021-2024 Thomas Weber
+Copyright (C) 2026 Clyain
 
 This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/.
