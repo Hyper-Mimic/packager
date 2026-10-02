@@ -1,10 +1,29 @@
 <script>
+  import {onDestroy} from 'svelte';
   import {_} from '../locales/';
 
   export let groups = [];
   export let value = '';
 
+  let navElement;
+  let triggerElement;
   let listElement;
+  // Compact mode only. Above the breakpoint the trigger is hidden and the list is always
+  // shown, so the flag is simply ignored there.
+  let expanded = false;
+
+  // Must stay in sync with the media query in the style block below.
+  const compactQuery = window.matchMedia('(max-width: 800px)');
+  const onCompactChange = (event) => {
+    // Leaving compact mode makes the list permanently visible again, so the popup state has
+    // to be dropped. Otherwise narrowing the window later would reveal a popup the user
+    // never opened.
+    if (!event.matches) {
+      expanded = false;
+    }
+  };
+  compactQuery.addEventListener('change', onCompactChange);
+  onDestroy(() => compactQuery.removeEventListener('change', onCompactChange));
 
   // Icons are inlined rather than loaded from an icon set: the site has no icon pipeline, and
   // a font or sprite would be an extra request for eight glyphs. Each entry is a list of path
@@ -39,6 +58,7 @@
   // option panels have published their groups - fall back to the first one so the tablist
   // stays reachable.
   $: selectedId = groups.some((group) => group.id === value) ? value : (groups[0] ? groups[0].id : '');
+  $: selectedGroup = groups.find((group) => group.id === selectedId);
 
   const getIndex = () => groups.findIndex((group) => group.id === selectedId);
 
@@ -56,7 +76,40 @@
     });
   };
 
+  // Picking a group also closes the compact popup. Above the breakpoint there is nothing to
+  // close, so this is just an assignment.
+  const selectGroup = (id) => {
+    value = id;
+    expanded = false;
+  };
+
   const onKeydown = (event) => {
+    if (event.key === 'Escape' && expanded) {
+      expanded = false;
+      if (triggerElement) {
+        triggerElement.focus();
+      }
+      return;
+    }
+
+    // Arrow keys drive the list through its roving tabindex. Pressing them on the compact
+    // trigger unfolds the popup and hands focus to the selected item rather than moving the
+    // selection behind a closed panel.
+    if (event.target === triggerElement) {
+      if (!['ArrowDown', 'ArrowUp', 'Home', 'End'].includes(event.key)) {
+        return;
+      }
+      event.preventDefault();
+      expanded = true;
+      focusIndex(Math.max(getIndex(), 0));
+      return;
+    }
+
+    // Everything else only applies while focus is inside the list itself.
+    if (!listElement || !listElement.contains(event.target)) {
+      return;
+    }
+
     const current = getIndex();
     if (current === -1) return;
 
@@ -83,13 +136,31 @@
     event.preventDefault();
     focusIndex(next);
   };
+
+  // A popup that stays open while the page behind it is being used is worse than no popup:
+  // close it on any press outside the navigation.
+  const onWindowPointerDown = (event) => {
+    if (!expanded) return;
+    if (navElement && !navElement.contains(event.target)) {
+      expanded = false;
+    }
+  };
 </script>
+
+<svelte:window on:pointerdown={onWindowPointerDown} />
 
 <style>
   /* Stickiness is handled by the page shell (.sidebar-inner in P4.svelte), because this
      list is only one part of the sidebar. */
   nav {
+    /* Containing block for the compact popup below. */
+    position: relative;
     min-width: 0;
+  }
+  /* Hidden everywhere except the compact breakpoint, where it replaces the always-visible
+     list. */
+  .trigger {
+    display: none;
   }
   ul {
     display: flex;
@@ -122,7 +193,8 @@
   }
   /* The label is a flex item so it can be the thing that truncates; `min-width: 0` is what
      actually allows it to shrink below its content width. */
-  button > span {
+  .trigger > span,
+  li button > span {
     min-width: 0;
     overflow: hidden;
     white-space: nowrap;
@@ -171,42 +243,90 @@
     outline-offset: 2px;
   }
   @media (max-width: 800px) {
-    /* The sidebar collapses into a horizontally scrollable chip bar; the marker would be
-       invisible inside a pill, so selection is shown with the border and the label colour
-       instead. */
-    ul {
-      flex-direction: row;
-      gap: 6px;
-      overflow-x: auto;
-      -webkit-overflow-scrolling: touch;
-      scrollbar-width: none;
-    }
-    /* A scrollable flex row shrinks its items before it overflows, which would ellipsise the
-       labels instead of scrolling them. */
-    ul > li {
-      flex: none;
-    }
-    ul::-webkit-scrollbar {
-      display: none;
-    }
-    button {
-      gap: 7px;
-      width: auto;
-      padding: 6px 13px 6px 11px;
+    /* Compact mode. The bar has to stay one row tall: a wrapped chip row needs three or
+       four lines at phone widths, and a horizontally scrollable row is not actually
+       scrollable with a plain mouse wheel (it is horizontal, the wheel is vertical, and
+       the scrollbar is hidden), which made the navigation look stuck. The trigger unfolds
+       the very same list instead, so every group stays one press away. */
+    .trigger {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      width: 100%;
+      padding: 9px 10px 9px 12px;
+      font-family: inherit;
+      font-size: 14px;
+      font-weight: 500;
+      line-height: 1.35;
+      text-align: left;
+      color: var(--text, #1d1f21);
+      background: var(--surface-2, #f5f6f7);
       border: 1px solid var(--border, #e3e4e6);
-      border-radius: 999px;
+      border-radius: var(--radius-md, 10px);
+      cursor: pointer;
     }
-    button::before {
+    .trigger > span {
+      flex: 1;
+    }
+    .trigger:focus-visible {
+      outline: 2px solid var(--focus, #4c97ff);
+      outline-offset: 2px;
+    }
+    .trigger[aria-expanded="true"] {
+      background: var(--surface-3, #ececee);
+      border-color: var(--border-strong, #cfd1d4);
+    }
+    .chevron {
+      transition: transform 0.15s;
+    }
+    .trigger[aria-expanded="true"] .chevron {
+      transform: rotate(180deg);
+    }
+    /* Floats over the page rather than pushing it down, so opening the navigation does not
+       shift everything below the bar. The page shell keeps `overflow` visible on the bar
+       for exactly this reason. The offset clears the bar's own padding and bottom border so
+       the panel never straddles that divider. */
+    ul {
+      position: absolute;
+      top: calc(100% + 10px);
+      right: 0;
+      left: 0;
       display: none;
+      margin: 0;
+      padding: 4px;
+      background: var(--surface, #fff);
+      border: 1px solid var(--border, #e3e4e6);
+      border-radius: var(--radius-md, 10px);
+      box-shadow: var(--shadow-lg, 0 16px 40px rgba(0, 0, 0, 0.3));
     }
-    button[aria-selected="true"] {
-      border-color: var(--accent, #ff4c4c);
+    ul.expanded {
+      display: flex;
     }
   }
 </style>
 
-<nav aria-label={$_('options.nav')}>
-  <ul role="tablist" aria-orientation="vertical" bind:this={listElement} on:keydown={onKeydown}>
+<nav aria-label={$_('options.nav')} bind:this={navElement} on:keydown={onKeydown}>
+  <!-- Compact trigger. `aria-controls` points at the one and only tablist rather than at a
+       second copy of it, so the document never holds two sets of tabs. -->
+  <button
+    class="trigger"
+    type="button"
+    aria-expanded={expanded}
+    aria-controls="settings-groups"
+    on:click={() => expanded = !expanded}
+    bind:this={triggerElement}
+  >
+    <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+      {#each ICONS[selectedId] || ICONS.other as d}
+        <path {d} />
+      {/each}
+    </svg>
+    <span>{selectedGroup ? selectedGroup.label : ''}</span>
+    <svg class="chevron" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+      <path d="M6.8 9.6 12 14.8l5.2-5.2" />
+    </svg>
+  </button>
+  <ul id="settings-groups" class:expanded role="tablist" aria-orientation="vertical" bind:this={listElement}>
     {#each groups as group (group.id)}
       <li role="presentation">
         <button
@@ -216,7 +336,7 @@
           aria-selected={group.id === selectedId}
           aria-controls={`panel-${group.id}`}
           tabindex={group.id === selectedId ? 0 : -1}
-          on:click={() => value = group.id}
+          on:click={() => selectGroup(group.id)}
         >
           <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
             {#each ICONS[group.id] || ICONS.other as d}

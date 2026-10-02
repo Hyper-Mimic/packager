@@ -510,21 +510,48 @@
     color: inherit;
   }
   @media (max-width: 800px) {
-    /* Single column: the sidebar collapses into a sticky top bar holding a horizontally
-       scrollable list of group chips (see SettingsNav.svelte). */
+    /* Single column: the sidebar collapses into a sticky top bar holding the compact
+       settings navigation (see SettingsNav.svelte). */
+    /* A flex column rather than a single-column grid, which fixes two things at once.
+       Against the grid: a grid item is confined to its own grid area, which here is exactly
+       the height of the bar, and `position: sticky` has no room to travel inside that, so
+       the bar scrolled away with the page. Against a plain block: a block child does not
+       stretch, so <main> ended up exactly as tall as the panels. That mattered because the
+       sticky action bar inside it can only be pulled back into view, never pushed down, so
+       whenever the panels are shorter than the viewport the bar parked at the end of the
+       content - in the middle of the page - instead of at the bottom. As a flex item with
+       a growth factor <main> now always reaches the bottom of the viewport, which is what
+       lets `.settings` hand the leftover height down to the bar. */
     .app {
-      grid-template-columns: minmax(0, 1fr);
+      display: flex;
+      flex-direction: column;
     }
+    /* The bar carries the sticky positioning, so it needs the chrome that used to sit on
+       the inner box: the inner box is only as tall as its contents. `flex: none` keeps the
+       column from stretching it - it has to stay at its natural height so the region it
+       sticks across is the whole document. */
     .sidebar {
-      border-right: none;
-    }
-    .sidebar-inner {
+      flex: none;
+      position: sticky;
+      top: 0;
       z-index: 5;
-      max-height: none;
-      gap: 0;
-      padding: 8px 12px;
+      border-right: none;
       border-bottom: 1px solid var(--border, #e3e4e6);
       background: var(--bg);
+    }
+    /* Takes whatever the top bar leaves of the viewport. */
+    main {
+      flex: 1 0 auto;
+    }
+    .sidebar-inner {
+      /* Sticky lives on the bar above; the inner box only contributes the padding. */
+      position: static;
+      max-height: none;
+      /* The compact navigation unfolds as a popup, which an `auto` overflow here would clip
+         at the bar's padding box. Nothing needs to scroll inside the bar at this size. */
+      overflow: visible;
+      gap: 0;
+      padding: 8px 12px;
     }
     .sidebar-brand {
       display: none;
